@@ -8,6 +8,7 @@ import math
 import sys
 import random
 import os
+import time
 
 from pygame.sprite import Group, Sprite
 from pygame import Surface
@@ -48,15 +49,24 @@ WALL_THICKNESS = 20
 
 # Create Game Manager class
 class GameManager(object):
-    def __init__(self, speed, p_speed, screen, bg_image, bottom_surf, level) -> None:
+
+    def __init__(
+        self, CFG, screen, bg_image, bottom_surf, level
+    ) -> None:
         self.game_state = GS.initializing
+        self.cfg = CFG
         # Put all config data in here!!!
         self.shared_data = {
+            "cfg": self.cfg,
             "score": 0,
-            "game_speed": speed,
-            "paddle_speed": p_speed,
+            "game_speed": self.cfg['GAME_SPEED'],
+            "paddle_speed": self.cfg['PADDLE_SPEED'],
+            "ball_speed": self.cfg['BALL_SPEED'],
             "kill_list": set(),
             "bricks": [],
+            "walls": [],
+            "paddle": [],
+            "paddle_reset_timer": False
         }
         # self.score = 0
         # self.game_loop = False
@@ -74,27 +84,27 @@ class GameManager(object):
 
     def build_level(self, level):
         self.walls = Group()
-        self.walls.add(
-            Wall([0, WALL_THICKNESS], [WALL_THICKNESS, SCREEN_HEIGHT], "left"),
-            Wall(
-                [SCREEN_WIDTH - WALL_THICKNESS, WALL_THICKNESS],
-                [WALL_THICKNESS, SCREEN_HEIGHT],
-                "right",
-            ),
-            Wall(
-                [0, 0],
-                [SCREEN_WIDTH, WALL_THICKNESS],
-                "top",
-            ),
+        wall_attr = (
+            self.cfg["WALL_THICKNESS"],
+            self.cfg["SCREEN_HEIGHT"],
+            self.cfg["SCREEN_WIDTH"],
         )
+        self.walls.add(
+            Wall(*wall_attr, "left"),
+            Wall(*wall_attr, "right"),
+            Wall(*wall_attr, "top"),
+        )
+        self.shared_data['walls'] = self.walls
         self.bricks = Group()
         self.bricks.add(
             [Brick(coord[0], coord[1], self.shared_data) for coord in level]
         )
         self.shared_data["bricks"] = self.bricks
-        self.paddle = Paddle(self.walls, self.shared_data)
+        self.paddle = Paddle(self.shared_data)
+        self.shared_data['paddle'] = self.paddle
+        
         # self.clear_paddle = Paddle(BG_COLOR, self.paddle_speed)
-        self.ball = Ball(BALL_COLOR, self.paddle, self.walls, self.shared_data)
+        self.ball = Ball(self.shared_data)
         # self.clear_ball = Ball(BG_COLOR, self.paddle.rect, self.game_speed)
         #  self.all_sprites = Group()
         #  self.all_sprites.add(self.walls, self.bricks, self.paddle, self.ball)
@@ -118,22 +128,25 @@ class GameManager(object):
             # elif event.type == pg.USEREVENT:
             #     # print("Processing kill")
             #     if "KILL" in event.dict:
-            #         event.dict["KILL"] = self.kill_sprites(event.dict["KILL"])
+            #         event.dict["KILL"] = self.kill_sprites(event.dict["KILL"])                
+            if event.type == pg.KEYUP:
+                if pg.key.name(event.key) == 'left' or pg.key.name(event.key) == 'right':
+                    self.shared_data["paddle_reset_timer"] = True
 
-            keys = pg.key.get_pressed()
-            if keys[pg.K_ESCAPE]:
-                run = False
-            elif keys[pg.K_LEFT]:
-                self.paddle.set_direction(-1)
-            elif keys[pg.K_RIGHT]:
-                self.paddle.set_direction(1)
-            elif keys[pg.K_SPACE]:
-                self.ball.launch()
-            elif keys[pg.K_d]:
-                # debug output
-                print(self.bricks)
-            else:
-                self.paddle.set_direction(0)
+        keys = pg.key.get_pressed()
+        if keys[pg.K_ESCAPE]:
+            run = False
+        elif keys[pg.K_LEFT]:
+            self.paddle.set_direction(-1)
+        elif keys[pg.K_RIGHT]:
+            self.paddle.set_direction(1)
+        elif keys[pg.K_SPACE]:
+            self.ball.launch()
+        elif keys[pg.K_d]:
+            # debug output
+            print(self.bricks)
+        else:
+            self.paddle.set_direction(0)
 
         return run
 

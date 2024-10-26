@@ -8,7 +8,8 @@ import PIL
 import sys
 #import random
 import os
-
+import tomllib
+from config import config as CFG
 #from pygame.sprite import Group, Sprite
 from pygame import Surface
 
@@ -40,15 +41,13 @@ BG_COLOR_GRAD = [(255, 255, 255), (0,0,0)]
 
 BALL_RADIUS = 10
 WALL_THICKNESS = 20
-KILL = pg.event.Event(pg.USEREVENT, {"KILL": []})
+#KILL = pg.event.Event(pg.USEREVENT, {"KILL": []})
 
 LEVEL_1 = iter([
     (x, y)
     for x in range(100, SCREEN_WIDTH - 100, BRICK_SIZE[0])
     for y in range(100, SCREEN_HEIGHT // 2, BRICK_SIZE[1])
 ])
-print(type(LEVEL_1))
-# print(LEVEL_1)
 
 
 # Create Player class
@@ -56,20 +55,21 @@ print(type(LEVEL_1))
 
 def main():
     # Initialize the pygame instance
+   # with open('config.toml', 'rb') as f:
+   #     config = tomllib.load(f)
+    print(CFG['SCREEN_WIDTH'])
     pg.init()
     # Initialize the clock
     clock = pg.time.Clock()
     # Initialize the player
-    speed = 1
-    paddle_speed = 6
-    size = [SCREEN_WIDTH, SCREEN_HEIGHT]
+    size = [CFG['SCREEN_WIDTH'], CFG['SCREEN_HEIGHT']]
 
     # Initialize the screen
     screen = pg.display.set_mode(size)
     bg_image = PIL.Image.open(os.path.join(assets, 'mama_mars.jpg'))
     #print(bg_image.size)
     
-    bg_image = bg_image.resize((SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg_image = bg_image.resize(size)
     #frame = PIL.Image.open(os.path.join(assets, 'frame.png')
     #frame_mask = PIL.Image.open(os.path.join(assets, 'frame_mask.png')    
 
@@ -84,7 +84,7 @@ def main():
     frame = pg.image.load(os.path.join(assets, 'frame.png')).convert_alpha()
     
     frame_surf.blit(frame, (0,0))
-    frame_surf.set_colorkey(BLACK)
+    frame_surf.set_colorkey(CFG['BLACK'])
     
     
     bottom_surf = Surface(size)
@@ -93,7 +93,7 @@ def main():
    # frame = pg.image.load(os.path.join(assets, 'frame.png').convert_alpha()
     bottom_surf.blit(frame, (0, 0))
     
-    bottom_surf.set_colorkey(BLACK)
+    bottom_surf.set_colorkey(CFG['BLACK'])
     
     screen.blit(bottom_surf, (0,0))
     pg.display.flip()
@@ -103,9 +103,9 @@ def main():
 
     top_surf = Surface(size).convert_alpha()
     top_surf.fill((0, 0, 0, 0))
-    top_surf.set_colorkey(BLACK)
+    top_surf.set_colorkey(CFG['BLACK'])
     
-    game = GameManager(speed, paddle_speed, screen, frame_surf, bottom_surf, LEVEL_1)
+    game = GameManager(CFG, screen, frame_surf, bottom_surf, LEVEL_1)
 
     # moving = False
     # counter for animations - maybe use time module instead?

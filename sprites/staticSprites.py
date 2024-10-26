@@ -97,23 +97,33 @@ class Brick(Sprite):
 
 # Create Wall class
 class Wall(Sprite):
-    def __init__(self, pos, size, name) -> None:
+    def __init__(self, thickness, scr_height, scr_width, name) -> None:
         super().__init__()
         self.name = name
+        #self.image = Surface(size)
+#        self.mask = pg.mask.Mask((size[0]+6, size[1]+6)) #pg.mask.from_surface(self.image)
+        self.thickness = thickness
+        self.scr_height = scr_height
+        self.scr_width = scr_width
+        #self.rect.x = pos[0]
+        #self.rect.y = pos[1]
+        self.build()
+        
+    def build(self):
+        match self.name:
+            case 'left':
+                size = (self.thickness, self.scr_height)
+                pos = (0, self.thickness)
+            case 'right':
+                size = (self.thickness, self.scr_height)
+                pos = (self.scr_width - self.thickness, self.thickness)
+            case 'top':
+                size = (self.scr_width, self.thickness)
+                pos = (0, 0)
+
         self.image = Surface(size)
-        self.mask = pg.mask.Mask((size[0]+6, size[1]+6)) #pg.mask.from_surface(self.image)
-        #print(self.mask.get_size())
-        self.mask.fill()
-        #print(self.mask.get_at((0,0)))
-       # print(self.mask.get_at((12,1)))
-        
-        
-        #self.image.fill(BORDER_COLOR)
-        #draw_gradient(*size, 0, self.image, WALL_GRAD)
-        #self.image.set_colorkey(BLACK)
-        # self.image.set_colorkey(WHITE)
-        # pg.draw.circle(self.image, color, (BALL_RADIUS, BALL_RADIUS), BALL_RADIUS)
         self.rect = self.image.get_rect()
+        self.mask = pg.mask.Mask((size[0] + 6, size[1] + 6))
+        self.mask.fill()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
-        # print(self.name)
