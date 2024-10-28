@@ -14,10 +14,11 @@ BALL_COLOR = [15, 133, 29]
 PADDLE_COLOR = [97, 13, 75]
 BRICK_GRAD = [[110, 220, 180], [0, 90, 180]]
 WALL_GRAD = [[110, 70, 90], [30, 0, 10]]
-BG_COLOR_GRAD = [[255, 255, 255], [0,0,0]]
+BG_COLOR_GRAD = [[255, 255, 255], [0, 0, 0]]
 
 # Objects properties
 PADDLE_SIZE = [100, 20]
+PADDLE_OFFSET = 50
 BRICK_SIZE = [80, 40]
 BALL_RADIUS = 10
 WALL_THICKNESS = 20
@@ -26,3 +27,25 @@ WALL_THICKNESS = 20
 GAME_SPEED = 1
 PADDLE_SPEED = 6
 BALL_SPEED = 6
+
+# Asset files
+PADDLE_IMG = "assets/paddle.png"
+BALL_IMG = "assets/ball_purple.png"
+BG_IMG = "assets/mama_mars.jpg"
+FRAME_IMG = "assets/frame.png"
+BRICK_IMG = "assets/brick.png"
+BRICK_ANIMS = [
+    "assets/brick_anim_1.png",
+    "assets/brick_anim_2.png",
+    "assets/brick_anim_3.png",
+    "assets/brick_anim_4.png",
+    "assets/brick_anim_5.png",
+    "assets/brick_anim_6.png",
+    "assets/brick_anim_7.png",
+]
+
+PADDLE_BALL_HIT_SOUND = "assets/sounds/WHOOSH_Air_Very_Fast_RR8_mono.wav"
+
+#PADDLE_BALL_HIT_SOUND = "assets/sounds/GOLF_Ball_Hit_Grass_Medium_mono.wav"
+PADDLE_BALL_RELEASE_SOUND = "assets/sounds/GOLF_Ball_Hit_Grass_Soft_mono.wav"
+GLASS_SHATTER_SOUND = "assets/sounds/GLASS_Fragment_07_mono.wav"
